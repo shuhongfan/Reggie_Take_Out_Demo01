@@ -18,3 +18,5 @@ mybatis-plus:
   global-config:
     db-config:
       id-type: ASSIGN_ID
+uploadFilePath:
+  path: C:\Users\shuho\Documents\Code\Reggie_Take_Out_Demo01\reggie_take_out\src\main\resources\uploadFile\
