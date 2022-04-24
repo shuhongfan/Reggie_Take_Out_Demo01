@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestController
@@ -57,5 +59,44 @@ public class EmployeeController {
 //        6.登录成功，将员工id存入session并返回成功
         request.getSession().setAttribute("employee", emp.getId());
         return R.success(emp);
+    }
+
+    /**
+     * 退出登录
+     * @return
+     */
+    @PostMapping("/logout")
+    public R<String> logout(HttpServletRequest request){
+//        请求Session中保存的当前登录员工的Id
+        request.getSession().removeAttribute("employee");
+        return R.success("退出成功");
+    }
+
+    /**
+     * 新增员工
+     * @param employee
+     * @return
+     */
+    @PostMapping
+    public R<String> save(HttpServletRequest request, @RequestBody Employee employee){
+        log.info("新增员工，员工信息：{}",employee);
+
+//        设置初始密码123456，需要进行md5加密处理
+        employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes(StandardCharsets.UTF_8)));
+
+//        设置创建和更新时间
+        employee.setCreateTime(LocalDateTime.now());
+        employee.setUpdateTime(LocalDateTime.now());
+
+//        获得当前登录用户id
+        Long empId = (Long) request.getSession().getAttribute("employee");
+//        设置创建和更新用户
+        employee.setCreateUser(empId);
+        employee.setUpdateUser(empId);
+
+//        调度service创建员工
+        employeeService.save(employee);
+
+        return R.success("创建员工成功");
     }
 }

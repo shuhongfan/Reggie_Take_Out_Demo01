@@ -164,6 +164,7 @@
         },
         computed: {},
         created() {
+          // 获取用户数据
           const userInfo = window.localStorage.getItem('userInfo')
           if (userInfo) {
             this.userInfo = JSON.parse(userInfo)
