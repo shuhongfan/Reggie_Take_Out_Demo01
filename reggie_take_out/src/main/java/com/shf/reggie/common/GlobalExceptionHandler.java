@@ -31,4 +31,16 @@ public class GlobalExceptionHandler {
         }
         return R.error("未知错误");
     }
+
+    /**
+     * 异常处理方法
+     * @return
+     */
+    @ExceptionHandler(CustomException.class)
+    public R<String> exception(CustomException exception){
+        log.error(exception.getMessage());
+
+        return R.error(exception.getMessage());
+    }
+
 }
