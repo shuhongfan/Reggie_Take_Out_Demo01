@@ -9,10 +9,15 @@ import com.shf.reggie.entity.Setmeal;
 import com.shf.reggie.service.CategoryService;
 import com.shf.reggie.service.SetmealDishService;
 import com.shf.reggie.service.SetmealService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/setmeal")
 @Slf4j
+@Api(tags = "套餐相关接口")
 public class SetmealController {
     @Autowired
     private SetmealService setmealService;
@@ -42,6 +48,8 @@ public class SetmealController {
      * @return
      */
     @PostMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
+    @ApiOperation(value = "新增套餐接口")
     public R<String> save(@RequestBody SetmealDto setmealDto){
         log.info("套餐信息：{}",setmealDto);
 
@@ -58,6 +66,12 @@ public class SetmealController {
      * @return
      */
     @GetMapping("/page")
+    @ApiOperation("套餐分页查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="page",value = "页码",required = true),
+            @ApiImplicitParam(name="pageSize",value = "每页记录数",required = true),
+            @ApiImplicitParam(name="name",value = "套餐名称",required = false),
+    })
     public R<Page> page(int page,int pageSize,String name){
 //        分页构造器对象
         Page<Setmeal> pageInfo = new Page<>(page, pageSize);
